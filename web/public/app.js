@@ -56,30 +56,26 @@ function taskCard(task, completed = false) {
     <button class="task-check" data-action="${completed ? 'reopen' : 'complete'}" data-id="${esc(task.id)}" aria-label="${completed ? 'Reopen' : 'Complete'} ${esc(task.title)}">${completed ? '✓' : ''}</button>
     <div class="task-info"><h4 class="task-title">${esc(task.title)}</h4><div class="task-meta"><span>${esc(taskTypeLabel(task.type))} · ${esc(pretty(task.category))}</span><span>·</span><span>${duration(task.minutes)}</span><span>·</span><span>${esc(task.due_date)} · ${clock(task.deadline_time)}</span></div></div>
     <button class="delete" data-action="delete-task" data-id="${esc(task.id)}" aria-label="Delete ${esc(task.title)}">×</button></div>
-    ${completed ? '' : `<p class="task-reason">${esc(task.reason)}</p><div class="task-tags"><span class="tag ${task.days_left <= 2 ? 'due' : ''}">${esc(deadline(task.days_left))}</span><span class="tag ${task.fits_time ? 'fits' : 'long'}">${task.fits_time ? 'Fits your time' : 'Needs more time'}</span><span class="tag">${esc(pretty(task.priority))} priority</span><span class="tag">${esc(pretty(task.difficulty))} · ${esc(task.energy)} energy</span></div>`}</article>`;
+    ${completed ? '' : `<div class="task-tags"><span class="tag ${task.days_left <= 2 ? 'due' : ''}">${esc(deadline(task.days_left))}</span></div>`}</article>`;
 }
 
 function render() {
   const pending = state.tasks.filter(task => task.status === 'pending');
   const completed = state.tasks.filter(task => task.status === 'completed');
-  $('pending-count').textContent = pending.length;
-  $('completed-count').textContent = completed.length;
-  $('class-count').textContent = state.classes.length;
-  $('fact-count').textContent = state.system_fact_count;
   const date = new Date(`${state.today}T12:00:00+08:00`);
   $('today').textContent = date.toLocaleDateString('en-PH', {timeZone:'Asia/Manila', weekday:'long',month:'long',day:'numeric'}).toUpperCase();
   const groups = [
-    ['do_first','Do First','Due in 2 days or less','No urgent tasks. A little breathing room.'],
-    ['do_next','Do Next','Due in 3–5 days','Nothing coming up in the next 3–5 days.'],
-    ['do_later','Do Later','Due after 5 days','Your longer-term tasks will appear here.']
+    ['do_first','Do First','','No tasks.'],
+    ['do_next','Do Next','','No tasks.'],
+    ['do_later','Do Later','','No tasks.']
   ];
   $('board').innerHTML = groups.map(([id,title,range,empty]) => {
     const tasks = pending.filter(task => task.bucket === id);
     return `<section class="bucket ${id}" aria-label="${title}"><div class="bucket-heading"><div class="bucket-title"><span class="dot" aria-hidden="true"></span><h3>${title}</h3><small>${range}</small></div><span class="count">${tasks.length}</span></div>${tasks.length ? tasks.map(task => taskCard(task)).join('') : `<p class="empty">${empty}</p>`}</section>`;
   }).join('');
   $('completed-label').textContent = `${completed.length} task${completed.length === 1 ? '' : 's'}`;
-  $('completed').innerHTML = completed.length ? completed.map(task => taskCard(task,true)).join('') : '<p class="empty">Your finished tasks will appear here.</p>';
-  $('classes').innerHTML = state.classes.length ? state.classes.map(item => `<div class="class-row"><span class="class-day">${esc(item.day.slice(0,3))}</span><div class="class-info"><strong>${esc(item.subject)}</strong><span>${esc(pretty(item.day))} · ${clock(item.start)}–${clock(item.end)}</span></div><button class="edit-time" data-action="edit-class" data-id="${esc(item.id)}" aria-label="Edit ${esc(item.subject)} ${esc(item.day)} class">Edit</button><button class="delete" data-action="delete-class" data-id="${esc(item.id)}" aria-label="Delete ${esc(item.subject)} class">×</button></div>`).join('') : '<p class="empty">No classes yet. Add your first weekly class on the left.</p>';
+  $('completed').innerHTML = completed.length ? completed.map(task => taskCard(task,true)).join('') : '<p class="empty">No completed tasks.</p>';
+  $('classes').innerHTML = state.classes.length ? state.classes.map(item => `<div class="class-row"><span class="class-day">${esc(item.day.slice(0,3))}</span><div class="class-info"><strong>${esc(item.subject)}</strong><span>${esc(pretty(item.day))} · ${clock(item.start)}–${clock(item.end)}</span></div><button class="edit-time" data-action="edit-class" data-id="${esc(item.id)}" aria-label="Edit ${esc(item.subject)} ${esc(item.day)} class">Edit</button><button class="delete" data-action="delete-class" data-id="${esc(item.id)}" aria-label="Delete ${esc(item.subject)} class">×</button></div>`).join('') : '<p class="empty">No classes.</p>';
   $('subject-options').innerHTML = [...new Set(state.classes.map(item => item.subject))].map(subject => `<option value="${esc(subject)}"></option>`).join('');
   $('planning-hours-label').textContent = `${clock(state.planning_settings.day_start)}–${clock(state.planning_settings.day_end)}`;
   if (!$('planning-form').dataset.dirty) {
@@ -119,8 +115,8 @@ function renderCalendar() {
   $('calendar-day-caption').textContent = calendarDate === state.today ? 'TODAY' : 'SELECTED DAY';
   $('calendar-day-title').textContent = PlannerCalendar.format(calendarDate, {weekday:'long',month:'long',day:'numeric',year:'numeric'});
   const timeline = state.selected_date === calendarDate ? state.timeline : null;
-  let content = timeline ? `<p class="calendar-day-summary">${duration(timeline.scheduled_minutes)} planned work · ${duration(timeline.free_minutes)} still vacant</p>${timeline.within_horizon ? '' : '<p class="field-note">Work suggestions cover today and the next 89 days. Weekly classes still appear on other dates.</p>'}<ol class="day-timeline">${timeline.events.map(timelineEvent).join('')}</ol>` : '<p class="empty">Loading this day’s schedule…</p>';
-  if (timeline && !timeline.events.length) content += '<p class="empty">No scheduled activities on this date.</p>';
+  let content = timeline ? `<ol class="day-timeline">${timeline.events.map(timelineEvent).join('')}</ol>` : '<p class="empty">Loading…</p>';
+  if (timeline && !timeline.events.length) content += '<p class="empty">No activities.</p>';
   if (pending.length) content += `<details class="due-details"><summary>Due on this date · ${pending.length}</summary>${pending.map(task => taskCard(task)).join('')}</details>`;
   if (completed.length) content += `<div class="calendar-completed"><p class="field-note">Completed · ${completed.length}</p>${completed.map(task => taskCard(task,true)).join('')}</div>`;
   if (!tasks.length) {
@@ -176,7 +172,6 @@ function updateType() {
   if (!type) return;
   $('duration-label').textContent = type.id === 'exam_review' ? 'Review time needed' : 'Total work time needed';
   $('task-minutes').value = $('task-unit').value === 'hours' ? Number((type.minutes/60).toFixed(2)) : type.minutes;
-  $('type-info').textContent = `${pretty(type.category)} · ${pretty(type.priority)} priority · ${pretty(type.difficulty)} · ${pretty(type.energy)} energy. Typical time: ${duration(type.minutes)}; adjust it to your needs.`;
 }
 
 async function refresh() {

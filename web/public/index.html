@@ -13,39 +13,32 @@
 <main>
   <header>
     <a class="brand" href="/" aria-label="Daywise home"><span class="brand-mark" aria-hidden="true">d.</span>daywise</a>
-    <span class="local-badge"><span aria-hidden="true"></span> Local planner</span>
   </header>
   <section class="intro">
-    <div><p class="eyebrow" id="today">MAKE ROOM FOR WHAT MATTERS</p><h1>A little clarity.<br>A better day.</h1>
-    <p class="lead">Your tasks, in the right order. Add what’s on your plate<br class="desktop-break"> and let your deadlines guide the next step.</p></div>
-    <div class="summary" aria-label="Planner summary"><div><strong id="pending-count">0</strong><span>to work on</span></div><div><strong id="class-count">0</strong><span>weekly classes</span></div><div><strong id="completed-count">0</strong><span>completed</span></div></div>
+    <div><p class="eyebrow" id="today"></p><h1>Task planner</h1></div>
   </section>
   <div id="error" class="message error" role="alert" hidden></div>
   <div id="notice" class="message success" role="status" aria-live="polite" hidden></div>
   <div class="workspace">
     <aside class="input-panel">
       <section class="panel">
-        <div class="section-heading"><span class="step">01</span><h2>Add a task</h2></div>
-        <p class="hint">Big deadlines. Small errands. Start here.</p>
+        <div class="section-heading"><h2>Add task</h2></div>
         <form id="task-form">
           <label for="task-title">Task name</label>
-          <input id="task-title" name="title" placeholder="e.g. Finish AI assignment" maxlength="200" required>
+          <input id="task-title" name="title" maxlength="200" required>
           <label for="task-type">Task type</label>
-          <select id="task-type" name="type" aria-describedby="type-info" required disabled><option value="">Loading task types…</option></select>
-          <p id="type-info" class="field-note" aria-live="polite">Choose a type to see its category and suggested work time.</p>
-          <label for="task-subject">Subject <span class="muted">(optional)</span></label><input id="task-subject" list="subject-options" maxlength="200" placeholder="e.g. Computer Networks"><datalist id="subject-options"></datalist>
+          <select id="task-type" name="type" required disabled><option value="">Loading…</option></select>
+          <label for="task-subject">Subject</label><input id="task-subject" list="subject-options" maxlength="200"><datalist id="subject-options"></datalist>
           <div class="form-row"><div><label for="task-date">Deadline date</label><input id="task-date" type="date" min="1900-01-01" max="9999-12-31" required></div><div><label for="task-deadline-time">Deadline time</label><input id="task-deadline-time" type="time" value="23:59" required></div></div>
           <label id="duration-label" for="task-minutes">Total work time needed</label><div class="duration-field"><input id="task-minutes" name="minutes" type="number" min="1" max="10080" step="1" value="60" required><select id="task-unit" aria-label="Duration unit"><option value="minutes">Minutes</option><option value="hours">Hours</option></select></div>
-          <p class="field-note">Choose the exact date and time you need to finish. Long tasks or reviews can use several free periods.</p>
           <button class="primary" type="submit" disabled>Add task <span aria-hidden="true">＋</span></button>
         </form>
       </section>
       <section class="panel">
-        <div class="section-heading"><span class="step">02</span><h2>Add a class</h2></div>
-        <p class="hint">Keep your weekly commitments in view.</p>
+        <div class="section-heading"><h2>Add class</h2></div>
         <form id="class-form">
-          <label for="class-subject">Subject</label><input id="class-subject" name="subject" placeholder="e.g. Computer Networks" maxlength="200" required>
-          <fieldset id="class-days" class="weekday-field" aria-describedby="class-days-hint">
+          <label for="class-subject">Subject</label><input id="class-subject" name="subject" maxlength="200" required>
+          <fieldset id="class-days" class="weekday-field">
             <legend>Days of the week</legend>
             <div class="weekday-options">
               <label class="weekday-option"><input type="checkbox" name="days" value="monday" checked>Monday</label>
@@ -56,43 +49,37 @@
               <label class="weekday-option"><input type="checkbox" name="days" value="saturday">Saturday</label>
               <label class="weekday-option"><input type="checkbox" name="days" value="sunday">Sunday</label>
             </div>
-            <p id="class-days-hint" class="field-note">Select every day this class meets.</p>
           </fieldset>
           <div class="form-row"><div><label for="class-start">Starts at</label><input id="class-start" type="time" value="08:00" required></div><div><label for="class-end">Ends at</label><input id="class-end" type="time" value="10:00" required></div></div>
           <button class="secondary" type="submit" disabled>Add class <span aria-hidden="true">＋</span></button>
         </form>
       </section>
-      <div class="knowledge-note"><strong>A plan you can understand.</strong><p><span id="fact-count">120</span> system facts power the Prolog rules. Your deadlines decide the group; task knowledge adds context.</p><details><summary>How the rules work</summary><p>Pending tasks due in 2 days or less go first. Those due in 3–5 days go next. Tasks due after 5 days go later. Within each group, earlier deadlines lead, followed by type priority, difficulty, and duration.</p><p>Prolog places unfinished work into vacant periods between your classes, within your planning hours and before the deadline. These are suggestions; mark a task complete when all its work is done.</p></details></div>
     </aside>
     <div class="plan-panel">
       <section class="calendar panel" aria-labelledby="calendar-title">
-        <div class="calendar-heading"><div><p class="eyebrow">LOOK A LITTLE AHEAD</p><h2 id="calendar-title">Your calendar</h2></div><button id="calendar-today" class="calendar-today" type="button">Today</button></div>
-        <p class="hint">Choose a date to see classes, suggested work, and vacant time in order.</p>
-        <details class="planning-preferences"><summary>Planning hours: <span id="planning-hours-label">8:00 AM–10:00 PM</span></summary><form id="planning-form"><div class="form-row"><div><label for="planning-start">Day starts</label><input id="planning-start" type="time" value="08:00" required></div><div><label for="planning-end">Day ends</label><input id="planning-end" type="time" value="22:00" required></div></div><button type="submit" class="secondary">Save planning hours</button></form><p class="field-note">Applies every day. Class times are blocked automatically. Suggestions use the next 90 days and never assume you finished uncompleted work.</p></details>
+        <div class="calendar-heading"><div><h2 id="calendar-title">Calendar</h2></div><button id="calendar-today" class="calendar-today" type="button">Today</button></div>
+        <details class="planning-preferences"><summary>Planning hours: <span id="planning-hours-label">8:00 AM–10:00 PM</span></summary><form id="planning-form"><div class="form-row"><div><label for="planning-start">Start</label><input id="planning-start" type="time" value="08:00" required></div><div><label for="planning-end">End</label><input id="planning-end" type="time" value="22:00" required></div></div><button type="submit" class="secondary">Save</button></form></details>
         <div id="planning-warnings" role="status" class="planning-warnings" hidden></div>
         <div class="calendar-layout">
           <div class="calendar-month">
             <div class="month-navigation"><button id="calendar-prev" type="button" aria-label="Previous month">‹</button><h3 id="calendar-month" aria-live="polite"></h3><button id="calendar-next" type="button" aria-label="Next month">›</button></div>
             <div class="calendar-weekdays" aria-hidden="true"><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span></div>
             <div id="calendar-grid" class="calendar-grid" role="group" aria-label="Calendar dates"></div>
-            <div class="calendar-legend"><span><i class="calendar-marker class-marker" aria-hidden="true"></i>Class</span><span><i class="calendar-marker pending" aria-hidden="true"></i>Planned work</span><span>Number = tasks due</span></div>
           </div>
-          <section class="calendar-agenda" aria-labelledby="calendar-day-title" aria-live="polite"><p id="calendar-day-caption" class="eyebrow">SELECTED DAY</p><h3 id="calendar-day-title"></h3><div id="calendar-tasks"><p class="empty">Loading your calendar…</p></div></section>
+          <section class="calendar-agenda" aria-labelledby="calendar-day-title" aria-live="polite"><p id="calendar-day-caption" class="eyebrow"></p><h3 id="calendar-day-title"></h3><div id="calendar-tasks"><p class="empty">Loading…</p></div></section>
         </div>
       </section>
       <section aria-labelledby="plan-title">
-        <div class="plan-heading"><div><p class="eyebrow">ONE THING AT A TIME</p><h2 id="plan-title">Your next steps</h2></div><form id="time-form" class="time-filter"><label for="available">Time available</label><div><input id="available" type="number" min="0" max="10080" step="1" value="60" required><span>min</span><button type="submit" aria-label="Update available time">↵</button></div></form></div>
-        <p class="hint board-hint">Time-fit badges help you choose. All pending tasks stay visible.</p>
-        <div id="board" aria-live="polite"><p class="empty">Connecting to your planner…</p></div>
+        <div class="plan-heading"><div><h2 id="plan-title">Tasks</h2></div><form id="time-form" class="time-filter"><label for="available">Minutes</label><div><input id="available" type="number" min="0" max="10080" step="1" value="60" required><span>min</span><button type="submit" aria-label="Update available time">↵</button></div></form></div>
+        <div id="board" aria-live="polite"><p class="empty">Loading…</p></div>
       </section>
-      <section class="schedule panel" aria-labelledby="schedule-title"><div class="list-heading"><div><p class="eyebrow">YOUR WEEK AT A GLANCE</p><h2 id="schedule-title">Class schedule</h2></div><span class="muted">Weekly</span></div><div id="classes"><p class="empty">No classes added yet.</p></div><p class="field-note">These weekly commitments also appear in each date’s timeline.</p></section>
-      <section class="completed panel" aria-labelledby="completed-title"><div class="list-heading"><h2 id="completed-title">Completed</h2><span class="muted" id="completed-label">0 tasks</span></div><div id="completed"><p class="empty">Your finished tasks will appear here.</p></div></section>
+      <section class="schedule panel" aria-labelledby="schedule-title"><div class="list-heading"><h2 id="schedule-title">Classes</h2></div><div id="classes"><p class="empty">No classes.</p></div></section>
+      <section class="completed panel" aria-labelledby="completed-title"><div class="list-heading"><h2 id="completed-title">Completed</h2><span class="muted" id="completed-label">0</span></div><div id="completed"><p class="empty">No completed tasks.</p></div></section>
     </div>
   </div>
-  <footer><span>daywise <span aria-hidden="true">/</span> A calmer way forward.</span><span>Saved on this computer · Asia/Manila</span></footer>
 </main>
 <dialog id="class-editor" aria-labelledby="class-editor-title"><form id="edit-class-form">
-  <h2 id="class-editor-title">Edit weekly class</h2><p class="field-note">Changes this weekly occurrence. Other weekdays stay separate.</p>
+  <h2 id="class-editor-title">Edit class</h2>
   <input id="edit-class-id" type="hidden">
   <label for="edit-class-subject">Subject</label><input id="edit-class-subject" maxlength="200" required>
   <label for="edit-class-day">Weekday</label><select id="edit-class-day"><option value="monday">Monday</option><option value="tuesday">Tuesday</option><option value="wednesday">Wednesday</option><option value="thursday">Thursday</option><option value="friday">Friday</option><option value="saturday">Saturday</option><option value="sunday">Sunday</option></select>
@@ -100,11 +87,10 @@
   <p class="editor-error" role="alert" hidden></p><div class="editor-actions"><button type="button" data-close="class-editor" class="secondary">Cancel</button><button type="submit" class="primary">Save class</button></div>
 </form></dialog>
 <dialog id="work-editor" aria-labelledby="work-editor-title"><form id="edit-work-form">
-  <h2 id="work-editor-title">Choose work time</h2><p id="work-editor-task" class="hint"></p>
+  <h2 id="work-editor-title">Work time</h2><p id="work-editor-task" class="hint"></p>
   <input id="edit-work-id" type="hidden"><input id="edit-work-task" type="hidden">
   <label for="edit-work-date">Work date</label><input id="edit-work-date" type="date" required>
   <div class="form-row"><div><label for="edit-work-start">Starts at</label><input id="edit-work-start" type="time" required></div><div><label for="edit-work-end">Ends at</label><input id="edit-work-end" type="time" required></div></div>
-  <p class="field-note">This time will stay where you choose. Prolog schedules the remaining work around it, within your planning hours and before the deadline.</p>
   <p class="editor-error" role="alert" hidden></p><button id="work-auto" type="button" class="secondary" hidden>Return to automatic scheduling</button>
   <div class="editor-actions"><button type="button" data-close="work-editor" class="secondary">Cancel</button><button type="submit" class="primary">Save work time</button></div>
 </form></dialog>
